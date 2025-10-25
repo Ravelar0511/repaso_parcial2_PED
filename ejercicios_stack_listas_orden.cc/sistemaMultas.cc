@@ -14,21 +14,41 @@ struct Multa
     double Monto;
 };
 
-// ✅ Función para agregar una multa
+// ✅ Función para registrar una multa con validación básica
 Multa registrarMulta()
 {
     Multa m;
-    cout << "ID de multa: ";
+
+    cout << "ID de multa (mayor que 0): ";
     cin >> m.ID;
+    while (cin.fail() || m.ID <= 0)
+    {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Entrada inválida. Ingrese un número entero positivo: ";
+        cin >> m.ID;
+    }
+
     cin.ignore();
     cout << "Nombre del conductor: ";
     getline(cin, m.Conductor);
+
     cout << "Motivo de la multa: ";
     getline(cin, m.Motivo);
+
     cout << "Fecha (YYYY-MM-DD): ";
     getline(cin, m.Fecha);
-    cout << "Monto de la multa: ";
+
+    cout << "Monto de la multa (mayor que 0): ";
     cin >> m.Monto;
+    while (cin.fail() || m.Monto <= 0)
+    {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Entrada inválida. Ingrese un número mayor que 0: ";
+        cin >> m.Monto;
+    }
+
     cin.ignore();
     return m;
 }
@@ -56,7 +76,7 @@ void mostrarMultas(const list<Multa> &multas)
 {
     if (multas.empty())
     {
-        cout << "No hay multas registradas.\n";
+        cout << "No hay en existencia.\n";
         return;
     }
 
@@ -69,6 +89,12 @@ void mostrarMultas(const list<Multa> &multas)
 // ✅ Buscar multa por ID
 void buscarMulta(list<Multa> &multas, int idBuscado)
 {
+    if (multas.empty())
+    {
+        cout << "No hay en existencia.\n";
+        return;
+    }
+
     multas.sort([](const Multa &a, const Multa &b)
                 { return a.ID < b.ID; });
 
@@ -87,11 +113,11 @@ void buscarMulta(list<Multa> &multas, int idBuscado)
     }
     else
     {
-        cout << "\nNo se encontró ninguna multa con ID " << idBuscado << ".\n";
+        cout << "\nNo se encontró ninguna multa con ese ID.\n";
     }
 }
 
-// ✅ Programa principal que combina lista + pila
+// ✅ Programa principal
 int main()
 {
     list<Multa> registroMultas;
@@ -109,6 +135,14 @@ int main()
         cout << "Seleccione una opción: ";
         cin >> opcion;
 
+        while (cin.fail() || opcion < 0 || opcion > 4)
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Opción inválida. Ingrese un número entre 0 y 4: ";
+            cin >> opcion;
+        }
+
         switch (opcion)
         {
         case 1:
@@ -116,6 +150,13 @@ int main()
             int n;
             cout << "¿Cuántas multas deseas registrar?: ";
             cin >> n;
+            while (cin.fail() || n <= 0)
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "Ingrese un número válido (mayor que 0): ";
+                cin >> n;
+            }
             cin.ignore();
 
             for (int i = 0; i < n; ++i)
@@ -132,6 +173,11 @@ int main()
 
         case 2:
         {
+            if (registroMultas.empty())
+            {
+                cout << "No hay en existencia.\n";
+                break;
+            }
             ordenarPorFecha(registroMultas);
             cout << "\nMultas ordenadas por fecha:\n";
             mostrarMultas(registroMultas);
@@ -143,6 +189,13 @@ int main()
             int id;
             cout << "\nIngrese el ID de la multa a buscar: ";
             cin >> id;
+            while (cin.fail() || id <= 0)
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "Ingrese un ID válido (mayor que 0): ";
+                cin >> id;
+            }
             buscarMulta(registroMultas, id);
             break;
         }
@@ -151,7 +204,7 @@ int main()
         {
             if (pilaRecientes.empty())
             {
-                cout << "No hay multas recientes para anular.\n";
+                cout << "No hay en existencia.\n";
             }
             else
             {
@@ -174,11 +227,7 @@ int main()
         }
 
         case 0:
-            cout << "Saliendo del sistema de control de multas...\n";
-            break;
-
-        default:
-            cout << "Opción inválida. Intente nuevamente.\n";
+            cout << "Saliendo del sistema...\n";
             break;
         }
 
